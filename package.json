@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/node": "^16.10.9",
+    "chalk": "^4.1.2",
     "commander": "^8.2.0",
     "dotenv": "^10.0.0",
     "eslint": "^8.0.0",
@@ -20,8 +21,10 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-node": "^11.1.0",
+    "marked": "^3.0.7",
     "octokit": "^1.7.0",
     "prettier": "^2.4.1",
+    "prompts": "^2.4.2",
     "typescript": "^4.4.4"
   }
 }
