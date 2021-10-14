@@ -10,21 +10,60 @@ node src/main.js <parameter>
 git add <filename>
 
 */
+require('dotenv').config()
+
+const { GITHUB_ACCESS_TOKEN } = process.env
 
 const { program } = require('commander')
-const fs = require('fs')
+const { Octokit } = require('octokit')
+
+const octokit = new Octokit({ auth: GITHUB_ACCESS_TOKEN })
 
 program.version('0.0.1')
+
+program
+  .command('me')
+  .description('Check my Profile')
+  .action(async () => {
+    const {
+      data: { login },
+    } = await octokit.rest.users.getAuthenticated()
+    console.log('Hello %s', login)
+  })
 
 program
   .command('list-bugs')
   .description('List issues with bug label')
   .action(async () => {
-    console.log('before readFile...')
-    const result = await fs.promises.readFile('.prettierrc', 'utf-8')
-    console.log('readFile result:', result)
-    console.log('List bugs!')
+    const result = await octokit.rest.issues.listForRepo({
+      owner: 'one-coding',
+      repo: 'github-cli',
+      labels: 'bug',
+    })
+
+    const output = result.data.map((issue) => ({
+      title: issue.title,
+      number: issue.number,
+    }))
+
+    console.log('output😀 : ', output)
+
+    /* 이렇게도 할  수 있다~
+    const issueWithBugLabel = result.data.filter(
+      (issue) =>
+        issue.labels.find((label) => label.name === 'bug') !== undefined
+    )
+
+    const output = issueWithBugLabel.map((issue) => ({
+      title: issue.title,
+      number: issue.number,
+    }))
+    console.log('output 😀:', output)
+    */
   })
+
+// 풀 리퀘스트를 모두 검사해서,
+// 만약 너무 diff가 큰(100줄) 풀 리퀘스트가 있으면 'too-big'이라는 레이블을 붙인다.
 
 program
   .command('check-prs')
